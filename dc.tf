@@ -84,3 +84,18 @@ resource "azurerm_virtual_machine_data_disk_attachment" "disk_attach" {
 
 
 
+
+resource "azurerm_dev_test_global_vm_shutdown_schedule" "client_shutdown_dc" {
+  virtual_machine_id = azurerm_windows_virtual_machine.dc.id
+  location           = azurerm_resource_group.this.location
+  enabled            = true
+
+  daily_recurrence_time = "2300" 
+  timezone              = "W. Europe Standard Time"
+
+  notification_settings {
+    enabled         = false
+    time_in_minutes = 30
+    webhook_url     = ""
+  }
+}
