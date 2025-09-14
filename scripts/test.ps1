@@ -1,0 +1,1 @@
+New-Item -Path "C:\Scripts" -ItemType Directory -Force
