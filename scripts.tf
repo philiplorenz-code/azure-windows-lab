@@ -8,7 +8,7 @@ resource "azurerm_virtual_machine_extension" "provision_and_configure_ad" {
   settings = <<SETTINGS
   {
     "fileUris": [
-      "https://raw.githubusercontent.com/philiplorenz-code/pwsh-scripts/main/azure/install-ad.ps1"
+      "https://raw.githubusercontent.com/philiplorenz-code/azure-windows-lab/refs/heads/main/scripts/install-ad.ps1"
     ],
     "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File install-ad.ps1 -DomainName ${var.domain_name} -SafeModePass ${var.safemode_pass} -DomainNetbiosName ${var.domain_netbios_name}"
   }
@@ -50,9 +50,9 @@ resource "azurerm_virtual_machine_extension" "join_domain" {
   settings = <<SETTINGS
   {
     "fileUris": [
-      "https://raw.githubusercontent.com/philiplorenz-code/pwsh-scripts/main/azure/join-domain.ps1"
+      "https://raw.githubusercontent.com/philiplorenz-code/azure-windows-lab/refs/heads/main/scripts/join-domain.ps1"
     ],
-    "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File join-domain.ps1 -DomainName ${var.domain_name} -DomainJoinUser ${var.domain_netbios_name}\\Joiner -DomainJoinPassword ${var.joiner_password} -DnsServer ${azurerm_network_interface.client.private_ip_address}"
+    "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File join-domain.ps1 -DomainName ${var.domain_name} -DomainJoinUser ${var.domain_netbios_name}\\Joiner -DomainJoinPassword ${var.joiner_password} -DnsServer ${azurerm_network_interface.dc.private_ip_address}"
   }
   SETTINGS
 
@@ -79,7 +79,4 @@ resource "null_resource" "install_tools" {
     EOT
   }
 
-  depends_on = [
-    azurerm_virtual_machine_extension.join_domain
-  ]
 }
