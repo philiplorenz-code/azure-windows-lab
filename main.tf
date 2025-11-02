@@ -10,6 +10,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
     }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.5"
+    }    
   }
 }
 
@@ -48,4 +52,18 @@ module "clients" {
     sku       = "win10-22h2-pro"
     version   = "latest"
   }
+}
+
+resource "local_file" "vm_summary" {
+  filename = "${path.module}/vm-summary.txt"
+
+  content = join("\n----------------------------------------\n", [
+    for vm in module.clients.vm_details : <<-EOT
+      Name: ${vm.name}
+      Private IP: ${vm.private_ip}
+      Public IP: ${vm.public_ip != null ? vm.public_ip : "N/A"}
+      Username: ${vm.username}
+      Password: ${vm.password}
+    EOT
+  ])
 }

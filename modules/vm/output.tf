@@ -26,3 +26,17 @@ output "network_interface_ids" {
   description = "List of NIC IDs created for the VMs."
   value       = [for nic in azurerm_network_interface.nic : nic.id]
 }
+
+output "vm_details" {
+  description = "List of all VMs with name, private/public IP, username and password."
+  sensitive   = true
+  value = [
+    for idx in range(var.vm_count) : {
+      name        = azurerm_windows_virtual_machine.this[idx].name
+      private_ip  = azurerm_network_interface.nic[idx].private_ip_address
+      public_ip   = var.public_ip ? azurerm_public_ip.this[idx].ip_address : null
+      username    = var.admin_username
+      password    = var.admin_password
+    }
+  ]
+}
